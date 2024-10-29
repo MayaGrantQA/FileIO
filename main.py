@@ -1,18 +1,25 @@
 from tkinter import *
 from tkinter import filedialog as fd
+from tkinter import messagebox as mb
 from tkinter import ttk
 import requests
 
 
 def upload():
-    filepath = fd.askopenfilename()
-    if filepath:
-        files = {'file': open(filepath, 'rb')}
-        responce = requests.post('https://file.io', files=files)
-        if responce.status_code == 200:
-            link = responce.json()['link']
-            entry.insert(0, link)
-
+    try:
+        filepath = fd.askopenfilename()
+        if filepath:
+            with open(filepath, 'rb') as f:
+                files = {'file': f}
+                responce = requests.post('https://file.io', files=files)
+                responce.raise_for_status()
+                link = responce.json()['link']
+                entry.delete(0, END)  # Очищаем поле перед загрузкой нового файла
+                entry.insert(0, link)
+    except ValueError as ve:
+        mb.showerror("Ошибка", f"Произошла ошибка: {ve}")
+    except Exception as e:
+        mb.showerror("Ошибка", f"Произошла ошибка: {e}")
 
 
 window = Tk()

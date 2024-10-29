@@ -3,6 +3,7 @@ from tkinter import filedialog as fd
 from tkinter import messagebox as mb
 from tkinter import ttk
 import requests
+import pyperclip  # Библиотека для автоотправления ссылок в буфер обмена
 
 
 def upload():
@@ -16,6 +17,8 @@ def upload():
                 link = responce.json()['link']
                 entry.delete(0, END)  # Очищаем поле перед загрузкой нового файла
                 entry.insert(0, link)
+                pyperclip.copy(link)
+                mb.showinfo('Ссылка скопирована', f'Ссылка {link} успешно скопирована в буфер обмена')
     except ValueError as ve:
         mb.showerror("Ошибка", f"Произошла ошибка: {ve}")
     except Exception as e:
